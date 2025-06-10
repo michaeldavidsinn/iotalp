@@ -8,77 +8,106 @@
     <style>
         .glass {
             backdrop-filter: blur(12px);
-            background-color: rgba(255, 255, 255, 0.7);
+            background-color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: rgba(100, 100, 100, 0.3);
+            border-radius: 10px;
         }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-blue-100 via-white to-green-100 min-h-screen font-sans antialiased
-    flex items-center justify-center">
+<body
+    class="bg-gradient-to-br from-blue-100 via-white to-green-100 min-h-screen font-sans antialiased flex items-center justify-center px-4">
 
-    <div class="max-w-6xl mx-auto px-6 py-10 space-y-12 w-full">
+    <div class="max-w-6xl mx-auto w-full space-y-12 py-12">
 
-        {{-- Header --}}
-        <div class="text-center max-w-xl mx-auto mb-10">
-            <h1 class="text-4xl font-extrabold text-gray-800 mb-2">🖥️ Dashboard System</h1>
-            <p class="text-gray-500 text-lg">Monitor system status & latest notifications in real-time.</p>
+        <!-- Header -->
+        <div class="text-center">
+            <h1 class="text-5xl font-extrabold text-gray-800 mb-4">🖥️ System Dashboard</h1>
+            <p class="text-gray-500 text-lg">Monitor system status and notifications in real-time</p>
         </div>
 
-        {{-- Grid: 2 Column Layout --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <!-- Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-            {{-- System Status Card --}}
-            <div class="glass rounded-3xl shadow-xl p-12 border border-blue-200 min-h-[420px]
-                flex flex-col items-center text-center
-                {{ $status && $status->is_on ? 'bg-green-50' : 'bg-red-50' }}">
+            <!-- System Status Card -->
+            <div class="glass rounded-3xl p-12 shadow-2xl flex flex-col items-center justify-center text-center min-h-[460px]
+    {{ $status && $status->is_on ? 'bg-green-50' : 'bg-red-50' }}">
 
-                <!-- Icon besar -->
-                <div class="text-9xl mb-8 {{ $status && $status->is_on ? 'text-green-600' : 'text-red-600' }}">
-                    {{ $status && $status->is_on ? '🔆' : '⚡️' }}
+                <div class="flex items-center justify-center w-28 h-28 mb-8 rounded-full
+        {{ $status && $status->is_on ? 'bg-green-100 text-green-600 animate-pulse' : 'bg-red-100 text-red-600' }}">
+                    <span class="text-9xl select-none">
+                        {{ $status && $status->is_on ? '🔆' : '⚡️' }}
+                    </span>
                 </div>
 
-                <h2 class="text-3xl font-bold text-gray-800 mb-3">🔌 System Status</h2>
+                <h2 class="text-4xl font-extrabold text-gray-900 mb-4 tracking-wide">System Status</h2>
 
-                <p class="text-gray-700 text-xl mb-5">
+                <p class="text-xl text-gray-800 mb-6">
                     Status:
-                    <span class="font-bold {{ $status && $status->is_on ? 'text-green-600' : 'text-red-600' }}">
+                    <span class="font-bold
+            {{ $status && $status->is_on ? 'text-green-700' : 'text-red-700' }}">
                         {{ $status && $status->is_on ? 'System is ON' : 'System is OFF' }}
                     </span>
                 </p>
 
-                <!-- Info tambahan -->
-                <p class="text-gray-500 text-sm italic mb-10">
+                <p class="text-sm text-gray-500 italic tracking-wide">
                     Last updated: {{ $status ? $status->updated_at->diffForHumans() : 'N/A' }}
                 </p>
 
-                <form method="POST" action="/api/system-status" id="status-form" class="w-full max-w-xs mx-auto">
-                    @csrf
-                    <input type="hidden" name="is_on" value="{{ $status && $status->is_on ? 0 : 1 }}">
-                    <button
-                        class="w-full px-6 py-4 rounded-xl font-semibold text-white text-lg transition-all duration-300
-                        {{ $status && $status->is_on ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600' }}">
-                        {{ $status && $status->is_on ? 'Turn OFF' : 'Turn ON' }}
-                    </button>
-                </form>
             </div>
 
-            {{-- Notifications Card --}}
-            <div class="glass rounded-3xl shadow-xl p-10 border border-yellow-200 min-h-[420px] flex flex-col">
+            <!-- Notifications Card -->
+            <div class="glass rounded-3xl p-8 shadow-xl flex flex-col min-h-[440px] border border-yellow-300">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">📢 Notifications</h2>
 
                 @if($notifications->isEmpty())
                     <p class="text-gray-500 italic text-center mt-10">No notifications available.</p>
                 @else
-                    <div class="space-y-5 overflow-y-auto pr-3 flex-grow max-h-[370px]">
+                    <div class="space-y-4 overflow-y-auto pr-2 flex-grow max-h-[350px]">
                         @foreach($notifications as $notif)
                             <div
-                                class="p-4 rounded-2xl border transition
-                                        {{ $notif->is_read ? 'bg-gray-100 border-gray-200' : 'bg-yellow-50 border-yellow-300' }}">
-
+                                class="p-4 rounded-xl border {{ $notif->is_read ? 'bg-gray-100 border-gray-200' : 'bg-yellow-50 border-yellow-300' }}">
                                 <div class="flex justify-between items-start">
                                     <div>
-                                        <h3 class="font-semibold text-lg text-gray-800">{{ $notif->title }}</h3>
+                                        <h3 class="text-lg font-semibold text-gray-800">{{ $notif->title }}</h3>
                                         <p class="text-sm text-gray-600">{{ $notif->message }}</p>
+
+                                        {{-- Tampilkan data JSON dengan style rapi --}}
+                                        @php
+                                            $data = json_decode($notif->data, true);
+                                        @endphp
+
+                                        @if($data)
+                                            <div
+                                                class="mt-3 p-3 bg-white border border-gray-200 rounded-lg shadow-sm text-left text-sm text-gray-700">
+                                                <div class="flex flex-wrap gap-4">
+                                                    <div class="flex items-center space-x-2">
+                                                        <span class="font-semibold text-gray-900">Sensor:</span>
+                                                        <span
+                                                            class="px-2 py-1 bg-blue-100 text-blue-800 rounded">{{ $data['sensor'] ?? '-' }}</span>
+                                                    </div>
+                                                    <div class="flex items-center space-x-2">
+                                                        <span class="font-semibold text-gray-900">Value:</span>
+                                                        <span
+                                                            class="px-2 py-1 bg-green-100 text-green-800 rounded">{{ $data['value'] ?? '-' }}</span>
+                                                    </div>
+                                                    <div class="flex items-center space-x-2">
+                                                        <span class="font-semibold text-gray-900">Device:</span>
+                                                        <span
+                                                            class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded">{{ $data['device'] ?? '-' }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+
                                         <p class="text-xs text-gray-400 mt-1 italic">{{ $notif->created_at->diffForHumans() }}
                                         </p>
                                     </div>
@@ -91,7 +120,7 @@
                                                 <button class="text-sm text-blue-600 hover:underline">Mark as Read</button>
                                             </form>
                                         @else
-                                            <span class="text-green-500 font-medium text-sm">✓ Read</span>
+                                            <span class="text-green-600 text-sm font-medium">✓ Read</span>
                                         @endif
                                     </div>
                                 </div>
@@ -100,15 +129,17 @@
                     </div>
                 @endif
             </div>
+
         </div>
     </div>
 
-    {{-- Optional JS Form Submit --}}
+    <!-- JS for Status Form -->
     <script>
         document.getElementById('status-form')?.addEventListener('submit', async function (e) {
             e.preventDefault();
             const form = e.target;
             const formData = new FormData(form);
+
             const response = await fetch('/api/system-status', {
                 method: 'POST',
                 headers: {
@@ -118,14 +149,10 @@
                 body: formData
             });
 
-            console.log('Response status:', response.status);
-            const data = await response.json().catch(() => null);
-            console.log('Response data:', data);
-
             if (response.ok) {
                 location.reload();
             } else {
-                alert('Failed to update system status');
+                alert('Failed to update system status.');
             }
         });
     </script>

@@ -15,13 +15,22 @@ class NotificationSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 0; $i < 10; $i++) {
+        $types = ['system', 'buzzer', 'access', 'light'];
+
+        foreach (range(1, 10) as $i) {
             DB::table('notifications')->insert([
-                'title' => 'Notifikasi #' . ($i + 1),
-                'message' => 'Pesan dummy untuk testing UI notifikasi.',
+                'title' => "Contoh Notifikasi #$i",
+                'message' => "Ini adalah pesan dummy untuk testing notifikasi.",
+                'type' => $types[array_rand($types)],
+                'important' => rand(0, 1),
                 'is_read' => false,
-                'created_at' => now()->subMinutes($i * 5),
-                'updated_at' => now()->subMinutes($i * 5),
+                'data' => json_encode([
+                    'sensor' => 'rfid',
+                    'value' => rand(1, 100),
+                    'device' => 'Arduino-1'
+                ]),
+                'created_at' => now()->subMinutes($i * 3),
+                'updated_at' => now()->subMinutes($i * 3),
             ]);
         }
     }

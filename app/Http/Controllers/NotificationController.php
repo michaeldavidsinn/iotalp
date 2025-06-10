@@ -7,27 +7,41 @@ use App\Models\Notification;
 
 class NotificationController extends Controller
 {
-    public function index()
+    // Get all notifications (or filtered by type)
+    public function index(Request $request)
     {
-        $notifications = Notification::orderBy('created_at', 'desc')->get();
-        return response()->json($notifications);
+        $query = Notification::orderBy('created_at', 'desc');
+
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
+        }
+
+        return response()->json($query->get());
     }
 
+    // Store a new notification
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string',
             'message' => 'nullable|string',
+            'type' => 'nullable|string',
+            'important' => 'boolean',
+            'data' => 'nullable|array',
         ]);
 
         $notification = Notification::create([
-            'title' => $request->title,
-            'message' => $request->message,
+            'title' => $validated['title'],
+            'message' => $validated['message'] ?? null,
+            'type' => $validated['type'] ?? null,
+            'important' => $validated['important'] ?? false,
+            'data' => isset($validated['data']) ? json_encode($validated['data']) : null,
         ]);
 
         return response()->json($notification, 201);
     }
 
+    // Mark notification as read
     public function markAsRead($id)
     {
         $notification = Notification::findOrFail($id);
@@ -37,4 +51,3 @@ class NotificationController extends Controller
         return response()->json(['message' => 'Notification marked as read']);
     }
 }
-

@@ -15,7 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('message')->nullable();
+            $table->string('type')->nullable(); // system, buzzer, access, light, etc.
+            $table->boolean('important')->default(false);
             $table->boolean('is_read')->default(false);
+            $table->json('data')->nullable(); // optional structured data
             $table->timestamps();
         });
     }
